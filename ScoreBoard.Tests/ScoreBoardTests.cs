@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System.Collections.Generic;
+using System.Linq;
 using ScoreBoard.Storage;
 using Xunit;
 
@@ -103,6 +104,29 @@ namespace ScoreBoard.Tests
 
         [Theory]
         [InlineData("Ukraine", "Poland", 1, 1)]
+        public void GetTeamScoreTest(string team1, string team2, int team1Score, int team2Score)
+        {
+            //Arrange
+            var mockStorage = new Mock<IGamesStorage>();
+            var summaryMock = new Dictionary<(string homeTeam, string awayTeam), (int homeScore, int awayScore)>
+            {
+                {(team1, team2),(team1Score, team2Score)}
+            };
+            mockStorage.Setup(p => p.GetTeamScore(team1))
+                .Returns(summaryMock.First())
+                .Verifiable();
+
+            //Act
+            var board = new ScoreBoard(mockStorage.Object);
+            var summary = board.GetTeamScore(team1);
+
+            //Assert
+            mockStorage.Verify(p => p.GetTeamScore(team1), Times.Once);
+            Assert.Equal(summaryMock.First(), summary);
+        }
+
+        [Theory]
+        [InlineData("Ukraine", "Poland", 1, 1)]
         public void ExportGamesSummaryTest(string team1, string team2, int team1Score, int team2Score)
         {
             //Arrange
@@ -127,5 +151,30 @@ namespace ScoreBoard.Tests
             mockStorage.Verify(p => p.GetCurrentScores(), Times.Once);
             Assert.Equal(exportExpected, exportResult);
         }
+
+        [Theory]
+        [InlineData("Ukraine", "Poland", 1, 1)]
+        public void GetTeamScoreStatusTest(string team1, string team2, int team1Score, int team2Score)
+        {
+            //Arrange
+            var mockStorage = new Mock<IGamesStorage>();
+            var summaryMock = new Dictionary<(string homeTeam, string awayTeam), (int homeScore, int awayScore)>
+            {
+                {(team1, team2),(team1Score, team2Score)}
+            };
+            var statusExpected = $"{team1} {team1Score} - {team2} {team2Score}";
+            mockStorage.Setup(p => p.GetTeamScore(team1))
+                .Returns(summaryMock.First())
+                .Verifiable();
+
+            //Act
+            var board = new ScoreBoard(mockStorage.Object);
+            var statusResult = board.GetTeamScoreStatus(team1);
+
+            //Assert
+            mockStorage.Verify(p => p.GetTeamScore(team1), Times.Once);
+            Assert.Equal(statusExpected, statusResult);
+        }
+
     }
 }

@@ -80,5 +80,26 @@ namespace ScoreBoard
         {
             return _gamesStorage.GetCurrentScores();
         }
+
+        /// <summary>
+        /// Returns score status for selected team
+        /// </summary>
+        /// <param name="team">Team name</param>
+        /// <returns>Score for the team as string to display </returns>
+        public string GetTeamScoreStatus(string team)
+        {
+            var score = _gamesStorage.GetTeamScore(team);
+            return $"{score.Key.homeTeam} {score.Value.homeScore} - {score.Key.awayTeam} {score.Value.awayScore}";
+        }
+
+        /// <summary>
+        /// Returns score for selected team
+        /// </summary>
+        /// <param name="team">Team name</param>
+        /// <returns>Score for the team as key-value pair </returns>
+        public KeyValuePair<(string homeTeam, string awayTeam), (int homeScore, int awayScore)> GetTeamScore(string team)
+        {
+            return _gamesStorage.GetTeamScore(team);
+        }
     }
 }

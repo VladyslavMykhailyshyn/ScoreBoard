@@ -85,6 +85,38 @@ namespace ScoreBoard.Tests
             Assert.Equal((homeScore, awayScore), resultScores[(team1, team2)]);
         }
 
+
+        [Theory]
+        [InlineData("Poland", "Ukraine", 0, 0)]
+        public void GetTeamScoreTest(string team1, string team2, int homeScore, int awayScore)
+        {
+            //Arrange
+            var expected = new KeyValuePair<(string, string),(int, int)>((team1, team2),(homeScore, awayScore));
+
+            //Act
+            var storage = new GamesStorage();
+            storage.AddGame(team1, team2);
+            var score = storage.GetTeamScore(team1);
+
+            //Assert
+            Assert.NotNull(score);
+            Assert.Equal(expected, score);
+        }
+
+        [Theory]
+        [InlineData("Poland", "Ukraine", "France")]
+        public void GetNotExistingTeamScoreTest(string team1, string team2, string team3)
+        {
+            //Arrange
+
+            //Act
+            var storage = new GamesStorage();
+            storage.AddGame(team1, team2);
+
+            //Assert
+            Assert.Throws<KeyNotFoundException>(() => storage.GetTeamScore(team3));
+        }
+
         [Fact]
         //Used data from exercise to show that everything works as expected. 
         public void GetCurrentScoresTest()

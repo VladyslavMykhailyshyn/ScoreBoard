@@ -32,5 +32,12 @@ namespace ScoreBoard.Storage
         /// </summary>
         /// <returns>Scores dictionary with keys = team names and values = scores</returns>
         public Dictionary<(string homeTeam, string awayTeam), (int homeScore, int awayScore)> GetCurrentScores();
+        /// <summary>
+        /// Returns score for selected team
+        /// </summary>
+        /// <param name="team">Team name</param>
+        /// <returns>Score for the team as key-value pair </returns>
+        public KeyValuePair<(string homeTeam, string awayTeam), (int homeScore, int awayScore)> GetTeamScore(
+            string team);
     }
 }

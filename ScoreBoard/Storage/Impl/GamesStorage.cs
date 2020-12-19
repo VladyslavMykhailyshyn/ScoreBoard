@@ -70,5 +70,20 @@ namespace ScoreBoard.Storage.Impl
             return _gamesStore.Reverse().OrderByDescending(gs => gs.Value.awayScore + gs.Value.homeScore)
                 .ToDictionary(s => s.Key, s => s.Value);
         }
+
+        /// <summary>
+        /// Returns score for selected team
+        /// </summary>
+        /// <param name="team">Team name</param>
+        /// <returns>Score for the team as key-value pair </returns>
+        public KeyValuePair<(string homeTeam, string awayTeam), (int homeScore, int awayScore)> GetTeamScore(string team)
+        {
+            var result =  _gamesStore.FirstOrDefault(gs => gs.Key.homeTeam == team || gs.Key.awayTeam == team);
+            if (result.Equals(default(KeyValuePair<(string, string), (int, int)>)))
+            {
+                throw new KeyNotFoundException($"No games with {team}");
+            }
+            return result;
+        }
     }
 }
