@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ScoreBoard.Storage.Impl;
 using Xunit;
 
 namespace ScoreBoard.Tests
@@ -23,6 +26,47 @@ namespace ScoreBoard.Tests
         }
 
         [Theory]
+        [InlineData("Ukraine", "Poland")]
+        public void AddExistingGameTest(string team1, string team2)
+        {
+            //Arrange
+
+            //Act
+            var storage = new GamesStorage();
+            storage.AddGame(team1, team2);
+
+            //Assert
+            Assert.Throws<ArgumentException>(() => storage.AddGame(team1, team2));
+        }
+
+        [Theory]
+        [InlineData("Ukraine", "Poland", 0, 1)]
+        public void UpdateNotExistingGameTest(string team1, string team2, int homeScore, int awayScore)
+        {
+            //Arrange
+
+            //Act
+            var storage = new GamesStorage();
+            storage.AddGame(team1, team2);
+
+            //Assert
+            Assert.Throws<KeyNotFoundException>(() => storage.UpdateScore(team2, team2, homeScore, awayScore));
+        }
+
+        [Theory]
+        [InlineData("Ukraine", "Poland")]
+        public void DeleteNotExistingGameTest(string team1, string team2)
+        {
+            //Arrange
+
+            //Act
+            var storage = new GamesStorage();
+
+            //Assert
+            Assert.Throws<KeyNotFoundException>(() => storage.DeleteGame(team1, team2));
+        }
+
+        [Theory]
         [InlineData("Ukraine", "Poland", 1, 0)]
         [InlineData("Poland", "Ukraine", 0, 1)]
         public void UpdateScoreTest(string team1, string team2, int homeScore, int awayScore)
@@ -42,6 +86,7 @@ namespace ScoreBoard.Tests
         }
 
         [Fact]
+        //Used data from exercise to show that everything works as expected. 
         public void GetCurrentScoresTest()
         {
             //Arrange
